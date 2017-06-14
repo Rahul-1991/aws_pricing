@@ -6,21 +6,19 @@ class RegionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RegionModel
-        fields = ('id', 'region_name')
+        fields = '__all__'
 
 
 class InstanceSerializer(serializers.ModelSerializer):
-    region_id = serializers.SlugRelatedField(slug_field='instance_type', queryset=RegionModel.objects.all())
 
     class Meta:
         model = InstanceModel
-        fields = ('id', 'region_id', 'instance_type')
+        fields = '__all__'
 
 
 class SizePriceSerializer(serializers.ModelSerializer):
-    instance_id = serializers.SlugRelatedField(slug_field='size', queryset=InstanceModel.objects.all())
 
     class Meta:
         model = SizePriceModel
-        fields = ('id', 'instance_id', 'size', 'price')
+        fields = '__all__'
 
