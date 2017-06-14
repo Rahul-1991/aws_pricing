@@ -13,6 +13,8 @@ env/
 venv/
 build/
 develop-eggs/
+db.sqlite3
+migrations/
 dist/
 downloads/
 eggs/
