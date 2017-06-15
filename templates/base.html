@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Spot Manager</title>
+    <!-- Latest compiled and minified CSS -->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- Google styled fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+
+    <!--CSS files-->
+    <link rel="stylesheet" href="{% static 'css/master.css'%}">
+
+    <!--Javascript files-->
+    <!--<script src="{% static 'js/jquery-2.1.1.min.js' %}"></script>-->
+
+
+  </head>
+
+  <body>
+    <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <div>
+                    <img src="https://www.appneta.com/blog/wp-content/uploads/2013/12/ec2.png" width="30" height="30" class="d-inline-block align-top" alt="">
+                    Spot Manager
+                </div>
+            </a>
+            <div class="nav navbar-nav navbar-right">
+                <ul class="nav nav-pills">
+                    {% if user.is_authenticated %}
+                        <li role="presentation"><a href="{% url 'logout' %}">Sign Out</a></li>
+                    {% else %}
+                        <li role="presentation"><a href="{% url 'login' %}">Sign In</a></li>
+                        <li role="presentation"><a href="{% url 'registration' %}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mycontent">
+        {% block body_block %}
+
+        {% endblock %}
+    </div>
+  </body>
+
+    <!--<script src="{% static 'js/bootstrap.min.js' %}"></script>-->
+    <!--<script src="{% static 'blog/js/blog.js' %}"></script>-->
+
+</html>
