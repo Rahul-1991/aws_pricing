@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from auth_material import views as auth_view
 
 urlpatterns = [
+    url(r'^$', auth_view.index, name='index'),
     url(r'^admin/', admin.site.urls),
     url(r'^spotdata/', include('spot_data.urls')),
-    url(r'^', include('dashboard.urls'))
+    url(r'^auth/', include('auth_material.urls'))
 ]
