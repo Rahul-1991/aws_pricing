@@ -1,1 +1,18 @@
 {% extends 'base.html' %}
+
+{% block body_block %}
+
+    {% if user.is_authenticated %}
+
+    {% endif %}
+    <div id="graphdiv2" style="width:500px; height:300px;"></div>
+    <script type="text/javascript">
+      g2 = new Dygraph(
+        document.getElementById("graphdiv2"),
+        "Date,Temperature\n" +
+        "2008-05-07,75\n" +
+        "2008-05-08,70\n" +
+        "2008-05-09,80\n"
+      );
+    </script>
+{% endblock %}

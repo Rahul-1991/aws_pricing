@@ -18,6 +18,8 @@ migrations/
 dist/
 downloads/
 eggs/
+.DS_Store
+trust-policy.json
 .eggs/
 lib/
 lib64/

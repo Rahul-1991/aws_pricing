@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>AWS Price List API</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <style>
+    body { font-size: 62.5%; }
+    label, input { display:block; }
+    input.text { margin-bottom:12px; width:95%; padding: .4em; }
+    fieldset { padding:0; border:0; margin-top:25px; }
+    div#servers-container { float:left; margin: 20px 0; }
+    div#servers-container table { margin: 1em 0; border-collapse: collapse; width: 100%; }
+    div#servers-container table td, div#servers-container table th { border: 1px solid #eee; padding: .6em 10px; text-align: left; }
+    .ui-dialog .ui-state-error { padding: .3em; }
+    .validateTips { border: 1px solid transparent; padding: 0.3em; }
+    label {
+      display: block;
+      margin: 30px 0 0 0;
+    }
+    select {
+      width: 200px;
+    }
+    .overflow {
+      height: 200px;
+    }
+  </style>
+  <script>
+
+  region = "US West (Oregon)"
+  instances = {}
+
+  function update() {
+      c = $("#cores").val().trim();
+      if (!c) {
+        return;
+      }
+      m = $("#memory").val().trim();
+      if (!m) {
+        return;
+      }
+      region = $("#regions option:selected").text();
+
+      scored = [];
+      max = 0.0
+
+      // Score each instance
+      for(var i=0; i<instances[region].length; i++) {
+        instance = instances[region][i];
+        dc = Math.log2(instance['vcpu']/c);
+        dm = Math.log2(instance['memory']/m);
+
+        if ((dc > -1) && (dm > -1)) {
+
+          score = Math.sqrt(dc*dc + dm*dm);
+          max = Math.max(max, score);
+
+          instance['score'] = score;
+          scored.push(instance);
+        }
+      }
+
+      // Normalize scores
+      for(var i=0; i<scored.length; i++) {
+        scored[i]['score'] = ((1.0 - scored[i]['score']/max) * 100).toFixed(2);
+      }
+
+      // Sort by score
+      sorted = scored.sort(function(a, b){return b['score']-a['score']});
+      $("#instances tbody").empty();
+        for(var i=0; i<sorted.length; i++) {
+          instance = scored[i];
+          $( "#instances tbody" ).append( "<tr class=\"server\">" +
+            "<td>" + sorted[i]['score'] + "</td>" +
+            "<td>" + sorted[i]["type"] + "</td>" +
+            "<td>" + sorted[i]["vcpu"] + "</td>" +
+            "<td>" + sorted[i]["memory"] + "</td>" +
+            "<td>" + sorted[i]["cost"][0] + "</td>" +
+          "</tr>" );
+        };
+  }
+
+  $(function() {
+
+    $("#regions").selectmenu();
+
+    $('#regions').on('selectmenuchange', function(e) {
+      update();
+    });
+
+    $('#cores, #memory').on('change', function(e) {
+      update();
+    });
+
+    $.ajax({
+        url: "on-demand-prices.json",
+        context: $(this)
+      }).success(function(resp) {
+        instances = resp["instances"];
+
+        for (var key in instances) {
+          if (instances.hasOwnProperty(key)) {
+            $("#regions").append("<option>" + key + "</option>");
+          }
+        }
+        $('#regions').val(region);
+        $("#regions").selectmenu("refresh");
+
+        $('#published').text('AWS Price List API Example - Price date ' + resp["published"]);
+        $('#generated').text('Generated on ' + resp["created"]);
+
+        update();
+      });
+
+  });
+  </script>
+</head>
+<body>
+<h1 id="published">AWS Price List API Example</h1>
+<h3 id="generated">AWS Price List API Example</h3>
+<div id="servers-container" class="ui-widget">
+  <table id="servers" class="ui-widget ui-widget-content">
+    <thead>
+      <tr class="ui-widget-header ">
+        <th>Region</th>
+        <th>Cores</th>
+        <th>Memory (GB)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <td><select name="regions" id="regions" class="text ui-widget-content ui-corner-all"></select></td>
+      <td><input type="text" name="cores" id="cores" class="text ui-widget-content ui-corner-all" value="1"></td>
+      <td><input type="text" name="memory" id="memory" class="text ui-widget-content ui-corner-all" value="2"></td>
+    </tbody>
+  </table>
+  <table id="instances" class="ui-widget ui-widget-content">
+    <thead>
+      <tr class="ui-widget-header ">
+        <th>Score</th>
+        <th>Type</th>
+        <th>Cores</th>
+        <th>Memory (GB)</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</div>
+
+
+</body>
+</html>

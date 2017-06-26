@@ -21,5 +21,6 @@ urlpatterns = [
     url(r'^$', auth_view.index, name='index'),
     url(r'^admin/', admin.site.urls),
     url(r'^spotdata/', include('spot_data.urls')),
-    url(r'^auth/', include('auth_material.urls'))
+    url(r'^auth/', include('auth_material.urls')),
+    url(r'^dashboard/', include('dashboard.urls'))
 ]
